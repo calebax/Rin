@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg-start: #c17a5c; /* 暖橙 */
+  --bg-end: #d7e8fd; /* 浅蓝 */
+  --bg-angle: 135deg;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  bottom: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* 应用容器的渐变背景 */
+body {
+  background: linear-gradient(var(--bg-angle), var(--bg-start), var(--bg-end));
+}

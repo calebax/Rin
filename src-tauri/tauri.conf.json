@@ -5,22 +5,30 @@
   "identifier": "com.tauri.dev",
   "build": {
     "frontendDist": "../dist",
-    "devUrl": "http://localhost:5173",
+    "devUrl": "http://localhost:1420",
     "beforeDevCommand": "pnpm dev",
     "beforeBuildCommand": "pnpm build"
   },
   "app": {
     "windows": [
       {
+        "label": "main",
         "title": "le-browser",
         "width": 800,
         "height": 600,
         "resizable": true,
-        "fullscreen": false
+        "fullscreen": false,
+        "backgroundColor": "#000000"
       }
     ],
     "security": {
-      "csp": null
+      "csp": {
+        "default-src": "'self' https: data: wss:",
+        "img-src": "'self' https: data: blob:",
+        "style-src": "'self' 'unsafe-inline' https:",
+        "script-src": "'self' 'unsafe-eval' 'unsafe-inline' https:",
+        "connect-src": "'self' https: wss:"
+      }
     }
   },
   "bundle": {

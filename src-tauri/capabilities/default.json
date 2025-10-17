@@ -3,9 +3,19 @@
   "identifier": "default",
   "description": "enables the default permissions",
   "windows": [
-    "main"
+    "main",
+    "webview"
   ],
   "permissions": [
-    "core:default"
+    "core:default",
+    "core:webview:allow-create-webview",
+    "core:webview:allow-set-webview-size",
+    "core:webview:allow-set-webview-position",
+    "core:webview:allow-set-webview-auto-resize",
+    "core:webview:allow-webview-show",
+    "core:webview:allow-set-webview-focus",
+    "core:event:allow-listen",
+    "core:window:allow-inner-size",
+    "core:window:allow-scale-factor"
   ]
 }
