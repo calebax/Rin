@@ -1,10 +1,11 @@
+use std::sync::{Arc, Mutex};
 use tauri::menu::{MenuBuilder, SubmenuBuilder};
 use tauri::{
-    window::Effect, window::EffectsBuilder, App, Manager, WebviewBuilder, WebviewUrl,
-    WebviewWindow, WebviewWindowBuilder, Window, WindowEvent,
+    window::Effect, window::EffectsBuilder, App, Manager, WebviewUrl, WebviewWindow,
+    WebviewWindowBuilder, WindowEvent,
 };
 
-use crate::core::tab::{create_tab_internal, tab_resized};
+use crate::core::tab::{create_tab, TabManager};
 
 /// setup
 pub fn init(app: &mut App) -> std::result::Result<(), Box<dyn std::error::Error>> {
@@ -22,17 +23,11 @@ pub fn init(app: &mut App) -> std::result::Result<(), Box<dyn std::error::Error>
     let window_label = main_window.label().to_string();
     let handle_clone = app.handle().clone();
 
-    create_tab_internal(
-        &handle_clone,
-        &window_label,
-        // "https://v2.tauri.app",
-        "http://duckduckgo.com?q=Hello",
-        "Tauri",
-    )?;
-
     main_window.on_window_event(move |event| {
         if let WindowEvent::Resized(_size) = event {
-            tab_resized(&handle_clone, &window_label);
+            let tab_manager = handle_clone.state::<Arc<Mutex<TabManager>>>();
+            let tm = tab_manager.lock().unwrap();
+            tm.tab_resized(&handle_clone, &window_label);
         }
     });
 
@@ -83,6 +78,21 @@ fn window_init(app: &App) -> tauri::Result<WebviewWindow> {
         .transparent(true)
         .effects(effects)
         .build()?;
+
+    let tab_id = create_tab(&app.handle(), "main", "https://v2.tauri.app", "Tauri").unwrap();
+
+    let tab_manager = app.state::<Arc<Mutex<TabManager>>>();
+    {
+        let mut tm = tab_manager.lock().unwrap();
+        tm.switch_tab(&app.handle(), "main", tab_id).unwrap();
+    }
+
+    let _ = create_tab(
+        app.handle(),
+        "main",
+        "http://duckduckgo.com?q=Hello",
+        "DuckDuckGo",
+    );
 
     // window.add_child(
     //     WebviewBuilder::new("main-app", WebviewUrl::App(Default::default())).auto_resize(),

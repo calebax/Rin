@@ -3,8 +3,8 @@
 :root {
   /* --bg-start: rgba(193, 122, 92, 0.5);
   --bg-end: rgba(215, 232, 253, 0.5); */
-  --bg-start: rgba(255, 223, 220, 0.5); /* 浅珊瑚 */
-  --bg-end: rgba(255, 241, 239, 0.5); /* 雾粉渐变 */
+  --bg-start: rgba(255, 223, 220, 0.6); /* 浅珊瑚 */
+  --bg-end: rgba(255, 241, 239, 0.6); /* 雾粉渐变 */
   --bg-angle: 135deg;
   --sidebar-width: 200px;
   --titlebar-height: 48px;

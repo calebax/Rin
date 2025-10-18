@@ -70,7 +70,7 @@ export default function TitleBar() {
   return (
     <div
       id="titlebar"
-      className="h-[var(--titlebar-height)] w-full flex-shrink-0 flex items-center  backdrop-blur-lg select-none"
+      className="h-[var(--titlebar-height)] w-full flex-shrink-0 flex items-center select-none"
       data-tauri-drag-region
     >
       <div

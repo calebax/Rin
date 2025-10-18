@@ -1,106 +1,108 @@
-import React, { useState, useEffect } from "react";
-import { invoke } from "@tauri-apps/api/core";
-import { listen } from "@tauri-apps/api/event";
-
-export type TabItem = {
-  id: string;
-  title: string;
-  url: string;
-};
+import { useState } from "react";
+import { useTabs } from "../hooks/useTabs";
+import { isValidURL, normalizeURL } from "../utils/url";
 
 export default function TabList() {
-  const [tabs, setTabs] = useState<TabItem[]>([]);
-  const [activeId, setActiveId] = useState<string | null>(null);
+  const windowLabel = "main";
+  const { tabs, activeId, addTab, removeTab, selectTab } = useTabs(windowLabel);
 
-  // 创建新标签
-  const addTab = async (
-    url = "https://www.google.com.hk/",
-    title = "New Tab"
-  ) => {
-    const tabId: string = await invoke("create_tab", {
-      windowLabel: "main",
-      url,
-      title,
-    });
-    setTabs((prev) => [...prev, { id: tabId, title, url }]);
-    await invoke("switch_tab", { windowLabel: "main", tabId });
-    setActiveId(tabId);
-  };
+  // 地址栏内容
+  const [address, setAddress] = useState("");
 
-  // 关闭标签
-  const removeTab = async (id: string) => {
-    await invoke("close_tab", { windowLabel: "main", tabId: id });
+  /** 事件处理函数 */
+  const handleSelectTab = (tabId: string) => selectTab(tabId);
+  const handleRemoveTab = (tabId: string) => removeTab(tabId);
+  const handleAddTab = () => addTab("https://www.google.com.hk/", "New Tab");
 
-    setTabs((prev) => prev.filter((t) => t.id !== id));
-    setActiveId((curr) => {
-      if (curr === id) {
-        const first = tabs.find((t) => t.id !== id);
-        return first ? first.id : null;
+  /** 回车打开地址 */
+  const openAddress = async () => {
+    const trimmed = address.trim();
+    if (!trimmed) return;
+
+    // 检查是否为有效 URL
+    let toURL: string | null = null;
+    if (isValidURL(trimmed)) {
+      console.log("isValidURL:", trimmed, isValidURL(trimmed));
+      const url = normalizeURL(trimmed);
+      if (url) {
+        toURL = url;
       }
-      return curr;
-    });
+    }
+    if (!toURL) {
+      // 不是有效 URL，作为搜索词处理
+      const query = encodeURIComponent(trimmed);
+      toURL = `https://www.phind.com/search?q=${query}`;
+    }
+    await addTab(toURL, toURL);
+    setAddress("");
   };
 
-  // 切换标签
-  const selectTab = async (id: string) => {
-    await invoke("switch_tab", { windowLabel: "main", tabId: id });
-    setActiveId(id);
+  /** 根据 URL 计算 favicon */
+  const getFaviconUrl = (url: string) => {
+    try {
+      const host = new URL(url).hostname;
+      return `https://www.google.com/s2/favicons?domain=${host}&sz=64`;
+    } catch {
+      return `https://www.google.com/s2/favicons?domain=example.com&sz=64`;
+    }
   };
-
-  // 初始化：创建首页 & 监听标题变化（Tauri）
-  useEffect(() => {
-    let unlisten: (() => void) | null = null;
-    (async () => {
-      try {
-        const off = await listen("tauri://webview/title-changed", (event) => {
-          const payload = event.payload as { tabId: string; title: string };
-          setTabs((prev) =>
-            prev.map((t) =>
-              t.id === payload.tabId ? { ...t, title: payload.title } : t
-            )
-          );
-        });
-        unlisten = off;
-      } catch {
-        // 非 Tauri 环境（预览），跳过事件监听
-      }
-    })();
-
-    return () => {
-      if (unlisten) unlisten();
-    };
-  }, []);
 
   return (
     <aside
-      className="absolute left-0 bottom-0 backdrop-blur-md overflow-y-auto overflow-x-hidden flex-shrink-0"
+      className="absolute left-0 bottom-0 overflow-y-auto overflow-x-hidden flex-shrink-0"
       style={{ top: "var(--titlebar-height)", width: "var(--sidebar-width)" }}
     >
       <div className="px-4 py-4 min-h-full">
-        <div
-          className="flex items-center justify-center w-8 h-8 rounded cursor-pointer hover:bg-gray-700 mb-2"
-          onClick={() => addTab()}
-        >
-          <span className="text-lg">+</span>
+        {/* 地址栏 */}
+        <div className="mb-3">
+          <input
+            value={address}
+            onChange={(e) => setAddress(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") openAddress();
+            }}
+            placeholder="Search or enter URL"
+            className="w-full h-9 rounded-xl px-3 bg-white/70 text-black text-xs placeholder:text-gray-400 placeholder:text-xs shadow-sm outline-none focus:ring-2 ring-blue-400"
+          />
         </div>
+
+        {/* 新建标签：一行样式 */}
+        <div
+          className="flex items-center gap-3 h-9 px-3 mb-3 rounded-xl bg-white/10 text-gray-400 hover:bg-white/20 cursor-pointer transition-colors"
+          onClick={() => handleAddTab()}
+        >
+          <div className="w-5 h-5 flex items-center justify-center rounded-full bg-white/70 text-black">
+            +
+          </div>
+          <span className="text-sm">New Tab</span>
+        </div>
+
+        {/* 标签列表：带 favicon、选中态、悬停显示关闭 */}
         {tabs.map((t) => (
           <div
             key={t.id}
-            className={`flex items-center justify-between px-3 py-2 mb-1 rounded-md cursor-pointer transition-all duration-200 text-white/80 bg-white/5 hover:bg-white/10 hover:text-white ${
-              activeId === t.id ? "bg-blue-500/30 text-white" : ""
+            className={`group flex items-center gap-3 h-9 px-3 mb-2 rounded-xl cursor-pointer transition-colors duration-200 ${
+              activeId === t.id
+                ? "bg-white text-slate-900 shadow-sm"
+                : "bg-white/10 text-slate-900 hover:bg-black/10"
             }`}
-            onClick={() => selectTab(t.id)}
+            onClick={() => handleSelectTab(t.id)}
           >
-            <span className="flex-1 text-sm truncate">{t.title}</span>
-            <div
-              className="w-4 h-4 flex items-center justify-center rounded-full text-xs ml-2 opacity-70 transition-all duration-200 hover:bg-white/20 hover:opacity-100"
+            <img
+              src={getFaviconUrl(t.url)}
+              alt="favicon"
+              className="w-5 h-5 rounded"
+            />
+            <span className="flex-1 text-sm truncate">{t.name}</span>
+            <button
+              className="opacity-0 group-hover:opacity-100 w-5 h-5 flex items-center justify-center rounded-full text-xs transition-opacity hover:bg-white/30"
               onClick={(e) => {
                 e.stopPropagation();
-                removeTab(t.id);
+                handleRemoveTab(t.id);
               }}
             >
               ×
-            </div>
+            </button>
           </div>
         ))}
       </div>
