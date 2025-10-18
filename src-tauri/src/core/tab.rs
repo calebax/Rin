@@ -5,6 +5,10 @@ use uuid::Uuid;
 use tauri::webview::WebviewBuilder;
 use tauri::{AppHandle, LogicalPosition, LogicalSize, Manager, State, Webview, WebviewUrl, Window};
 
+use crate::core::layout::{get_sidebar_width, get_window_scale_factor, set_webview_properties};
+
+const TAB_MARGIN: f64 = 8.0;
+
 // 存储WebView元数据
 #[derive(Debug, Clone)]
 struct Tab {
@@ -61,6 +65,25 @@ pub fn get_active_webviews(app: &AppHandle, window_label: String) -> Vec<Webview
     result
 }
 
+pub fn tab_resized(app: &AppHandle, window_label: &str) {
+    let window = match app.get_window(window_label) {
+        Some(w) => w,
+        None => return, // 没找到窗口，直接返回
+    };
+
+    let window_size = window.inner_size().unwrap();
+    let scale_factor = get_window_scale_factor(&app, window_label).unwrap();
+    let sidebar_width = get_sidebar_width(window_label);
+
+    get_active_webviews(&app, window_label.to_string())
+        .iter()
+        .for_each(|webview| {
+            let (position, size) =
+                calc_webview_geometry(&webview.label(), window_size, scale_factor, sidebar_width);
+            set_webview_properties(webview, position, size);
+        });
+}
+
 pub fn create_tab_internal(
     app: &AppHandle,
     window_label: &str,
@@ -76,7 +99,10 @@ pub fn create_tab_internal(
 
     // 获取窗口尺寸
     let window_size = window.inner_size().map_err(|e| e.to_string())?;
-    let scale_factor = window.scale_factor().map_err(|e| e.to_string())?;
+    let scale_factor = get_window_scale_factor(&app, window_label).unwrap();
+    let sidebar_width = get_sidebar_width(window_label);
+
+    let (position, size) = calc_webview_geometry(&tab_id, window_size, scale_factor, sidebar_width);
 
     // 创建 WebView
     let _webview = window
@@ -85,11 +111,8 @@ pub fn create_tab_internal(
                 &tab_id,
                 WebviewUrl::External(url.parse::<url::Url>().map_err(|e| e.to_string())?),
             ),
-            LogicalPosition::new(200.0, 30.0),
-            LogicalSize::new(
-                window_size.width as f64 / scale_factor - 200.0,
-                window_size.height as f64 / scale_factor - 30.0,
-            ),
+            position,
+            size,
         )
         .map_err(|e| e.to_string())?;
 
@@ -118,13 +141,26 @@ pub fn create_tab_internal(
     Ok(tab_id)
 }
 
+fn calc_webview_geometry(
+    tab_id: &str,
+    window_size: tauri::PhysicalSize<u32>,
+    scale_factor: f64,
+    sidebar_width: f64,
+) -> (LogicalPosition<f64>, LogicalSize<f64>) {
+    let position = LogicalPosition::new(sidebar_width, TAB_MARGIN);
+    let size = LogicalSize::new(
+        window_size.width as f64 / scale_factor - sidebar_width - TAB_MARGIN,
+        window_size.height as f64 / scale_factor - TAB_MARGIN * 2.0,
+    );
+    (position, size)
+}
+
 #[tauri::command]
 pub async fn create_tab(
     app: AppHandle,
     window_label: String,
     url: String,
     title: String,
-    tab_manager: State<'_, TabManager>,
 ) -> Result<String, String> {
     create_tab_internal(&app, &window_label, &url, &title)
 }
@@ -158,24 +194,7 @@ pub async fn switch_tab(
             *active = Some(tab_id.clone());
         }
 
-        if let Some(webview) = window.get_webview(&tab_id) {
-            webview.show().map_err(|e| e.to_string())?;
-
-            // 与创建时保持一致：在切换时同步尺寸与位置，避免视觉错位
-            let window_size = window.inner_size().unwrap();
-            let scale_factor = window.scale_factor().unwrap();
-            let sidebar_width = 200.0;
-            let tabbar_height = 30.0;
-            webview
-                .set_size(LogicalSize::new(
-                    window_size.width as f64 / scale_factor - sidebar_width,
-                    window_size.height as f64 / scale_factor - tabbar_height,
-                ))
-                .map_err(|e| e.to_string())?;
-            webview
-                .set_position(LogicalPosition::new(sidebar_width, tabbar_height))
-                .map_err(|e| e.to_string())?;
-        }
+        tab_resized(&app, &window_label);
     }
 
     Ok(())

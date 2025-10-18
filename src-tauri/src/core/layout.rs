@@ -18,3 +18,7 @@ pub fn set_webview_properties(
         eprintln!("[Webview:size] Failed to set view size: {}", e);
     }
 }
+
+pub fn get_sidebar_width(window_label: &str) -> f64 {
+    200.0
+}
