@@ -19,6 +19,12 @@ pub fn set_webview_properties(
     }
 }
 
-pub fn get_sidebar_width(window_label: &str) -> f64 {
+pub fn get_sidebar_width(_window_label: &str) -> f64 {
     200.0
+}
+
+// 新增：对外暴露获取侧栏宽度的 Tauri 命令
+#[tauri::command]
+pub async fn get_sidebar_width_cmd(_app: AppHandle, window_label: String) -> Result<f64, String> {
+    Ok(get_sidebar_width(&window_label))
 }

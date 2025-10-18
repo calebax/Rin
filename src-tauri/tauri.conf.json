@@ -10,17 +10,8 @@
     "beforeBuildCommand": "pnpm build"
   },
   "app": {
-    "windows": [
-      {
-        "label": "main",
-        "title": "le-browser",
-        "width": 800,
-        "height": 600,
-        "resizable": true,
-        "fullscreen": false,
-        "backgroundColor": "#000000"
-      }
-    ],
+    "windows": [],
+    "macOSPrivateApi": true,
     "security": {
       "csp": {
         "default-src": "'self' https: data: wss:",

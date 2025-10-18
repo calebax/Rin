@@ -1,11 +1,8 @@
 {
   "$schema": "../gen/schemas/desktop-schema.json",
-  "identifier": "default",
-  "description": "enables the default permissions",
-  "windows": [
-    "main",
-    "webview"
-  ],
+  "identifier": "main-capability",
+  "description": "Capability for the main window",
+  "windows": ["main", "webview"],
   "permissions": [
     "core:default",
     "core:webview:allow-create-webview",
@@ -16,6 +13,12 @@
     "core:webview:allow-set-webview-focus",
     "core:event:allow-listen",
     "core:window:allow-inner-size",
-    "core:window:allow-scale-factor"
+    "core:window:allow-scale-factor",
+    "core:window:default",
+    "core:window:allow-start-dragging",
+    "core:window:allow-close",
+    "core:window:allow-minimize",
+    "core:window:allow-maximize",
+    "core:window:allow-toggle-maximize"
   ]
 }

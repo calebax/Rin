@@ -1,23 +1,28 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 :root {
-  --bg-start: #c17a5c; /* 暖橙 */
-  --bg-end: #d7e8fd; /* 浅蓝 */
+  /* --bg-start: rgba(193, 122, 92, 0.5);
+  --bg-end: rgba(215, 232, 253, 0.5); */
+  --bg-start: rgba(255, 223, 220, 0.5); /* 浅珊瑚 */
+  --bg-end: rgba(255, 241, 239, 0.5); /* 雾粉渐变 */
   --bg-angle: 135deg;
+  --sidebar-width: 200px;
+  --titlebar-height: 48px;
+  --tab-manger: 10px;
 }
 
 html,
 body,
 #root {
   margin: 0;
-  bottom: 0;
+  padding: 0;
   height: 100%;
+  /* border-radius: 10px; */
   overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
-/* 应用容器的渐变背景 */
+/* 应用容器的渐变背景，仅全局保留 */
 body {
   background: linear-gradient(var(--bg-angle), var(--bg-start), var(--bg-end));
 }

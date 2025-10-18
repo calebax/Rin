@@ -47,21 +47,23 @@ export default function TabList() {
     setActiveId(id);
   };
 
-  // 初始化：创建首页
+  // 初始化：创建首页 & 监听标题变化（Tauri）
   useEffect(() => {
-    console.log("TabList useEffect");
     let unlisten: (() => void) | null = null;
     (async () => {
-      // 监听 WebView 标题变化
-      const off = await listen("tauri://webview/title-changed", (event) => {
-        const payload = event.payload as { tabId: string; title: string };
-        setTabs((prev) =>
-          prev.map((t) =>
-            t.id === payload.tabId ? { ...t, title: payload.title } : t
-          )
-        );
-      });
-      unlisten = off;
+      try {
+        const off = await listen("tauri://webview/title-changed", (event) => {
+          const payload = event.payload as { tabId: string; title: string };
+          setTabs((prev) =>
+            prev.map((t) =>
+              t.id === payload.tabId ? { ...t, title: payload.title } : t
+            )
+          );
+        });
+        unlisten = off;
+      } catch {
+        // 非 Tauri 环境（预览），跳过事件监听
+      }
     })();
 
     return () => {
@@ -70,33 +72,38 @@ export default function TabList() {
   }, []);
 
   return (
-    <div className="flex items-center h-8 bg-gray-900 px-2 text-white">
-      <div
-        className="flex items-center justify-center w-6 h-6 rounded cursor-pointer ml-1 hover:bg-gray-700"
-        onClick={() => addTab()}
-      >
-        +
-      </div>
-      {tabs.map((t) => (
+    <aside
+      className="absolute left-0 bottom-0 backdrop-blur-md overflow-y-auto overflow-x-hidden flex-shrink-0"
+      style={{ top: "var(--titlebar-height)", width: "var(--sidebar-width)" }}
+    >
+      <div className="px-4 py-4 min-h-full">
         <div
-          key={t.id}
-          className={`flex items-center h-6 px-3 mx-0.5 rounded text-sm cursor-pointer ${
-            activeId === t.id ? "bg-gray-700" : "hover:bg-gray-800"
-          }`}
-          onClick={() => selectTab(t.id)}
+          className="flex items-center justify-center w-8 h-8 rounded cursor-pointer hover:bg-gray-700 mb-2"
+          onClick={() => addTab()}
         >
-          <span>{t.title}</span>
-          <div
-            className="flex items-center justify-center w-4 h-4 ml-2 rounded hover:bg-gray-600"
-            onClick={(e) => {
-              e.stopPropagation();
-              removeTab(t.id);
-            }}
-          >
-            ×
-          </div>
+          <span className="text-lg">+</span>
         </div>
-      ))}
-    </div>
+        {tabs.map((t) => (
+          <div
+            key={t.id}
+            className={`flex items-center justify-between px-3 py-2 mb-1 rounded-md cursor-pointer transition-all duration-200 text-white/80 bg-white/5 hover:bg-white/10 hover:text-white ${
+              activeId === t.id ? "bg-blue-500/30 text-white" : ""
+            }`}
+            onClick={() => selectTab(t.id)}
+          >
+            <span className="flex-1 text-sm truncate">{t.title}</span>
+            <div
+              className="w-4 h-4 flex items-center justify-center rounded-full text-xs ml-2 opacity-70 transition-all duration-200 hover:bg-white/20 hover:opacity-100"
+              onClick={(e) => {
+                e.stopPropagation();
+                removeTab(t.id);
+              }}
+            >
+              ×
+            </div>
+          </div>
+        ))}
+      </div>
+    </aside>
   );
 }

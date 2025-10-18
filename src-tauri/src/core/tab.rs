@@ -7,7 +7,7 @@ use tauri::{AppHandle, LogicalPosition, LogicalSize, Manager, State, Webview, We
 
 use crate::core::layout::{get_sidebar_width, get_window_scale_factor, set_webview_properties};
 
-const TAB_MARGIN: f64 = 8.0;
+const TAB_MARGIN: f64 = 10.0;
 
 // 存储WebView元数据
 #[derive(Debug, Clone)]
@@ -142,7 +142,7 @@ pub fn create_tab_internal(
 }
 
 fn calc_webview_geometry(
-    tab_id: &str,
+    _tab_id: &str,
     window_size: tauri::PhysicalSize<u32>,
     scale_factor: f64,
     sidebar_width: f64,
