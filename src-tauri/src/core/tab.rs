@@ -62,7 +62,7 @@ impl TabManager {
         let (position, size) =
             calc_webview_geometry(&tab_id, window_size, scale_factor, sidebar_width);
 
-        let webview_builder = create_webview_builder(&tab_id, search_query);
+        let webview_builder = create_webview_builder(app, &tab_id, search_query);
         let _ = window
             .add_child(webview_builder, position, size)
             .map_err(|e| e.to_string())
@@ -117,6 +117,7 @@ impl TabManager {
 
             if let Some(webview) = window.get_webview(&tab_id.to_string()) {
                 let _ = webview.show();
+                let _ = webview.set_focus();
             } else {
                 return Err("WebView not found".into());
             }

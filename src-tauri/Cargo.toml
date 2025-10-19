@@ -1,10 +1,10 @@
 [package]
-name = "app"
-version = "0.1.0"
-description = "A Tauri App"
-authors = ["caleb"]
-license = ""
-repository = ""
+name = "Rin"
+version = "0.0.0"
+description = "Rin Browser(Experimental)"
+authors = ["Caleb"]
+license = "MIT"
+repository = "https://github.com/calebax/Rin"
 edition = "2021"
 rust-version = "1.77.2"
 

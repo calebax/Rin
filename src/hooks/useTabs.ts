@@ -23,6 +23,10 @@ export function useTabs() {
     setWindowLabel(currentWindow.label);
   }, []);
 
+  useEffect(() => {
+    console.log("tabs updated:", tabs);
+  }, [tabs]);
+
   /** 新增标签 */
   const addTab = async (
     url = "https://www.google.com.hk/",
@@ -127,17 +131,22 @@ export function useTabs() {
         setActiveId(activeIdValue);
 
         // 监听 Tauri 标题变化事件
-        const off = await listen<{ tabId: string; title: string }>(
-          "tauri://webview/title-changed",
-          (event) => {
-            const payload = event.payload;
-            setTabs((prev) =>
-              prev.map((t) =>
-                t.id === payload.tabId ? { ...t, title: payload.title } : t
-              )
-            );
-          }
-        );
+        // listen<DownloadStarted>('download-started', (event) => {
+        const off = await listen<{
+          tabId: string;
+          title: string;
+          loaded: boolean;
+        }>("tab_update", (event) => {
+          console.log("listen event:", event);
+          const payload = event.payload;
+          setTabs((prev) =>
+            prev.map((t) =>
+              t.id === payload.tabId
+                ? { ...t, title: payload.title, name: payload.title }
+                : t
+            )
+          );
+        });
         unlisten = off;
       } catch (e) {
         console.warn("非 Tauri 环境或初始化失败:", e);
