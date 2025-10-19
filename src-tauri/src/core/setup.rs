@@ -5,7 +5,7 @@ use tauri::{
     WebviewWindowBuilder, WindowEvent,
 };
 
-use crate::core::tab::{create_tab, TabManager};
+use crate::core::tab::TabManager;
 
 /// setup
 pub fn init(app: &mut App) -> std::result::Result<(), Box<dyn std::error::Error>> {
@@ -17,8 +17,6 @@ pub fn init(app: &mut App) -> std::result::Result<(), Box<dyn std::error::Error>
         )?;
     }
 
-    // 初始化窗口
-    // let main_window = app.get_window("main").unwrap();
     let main_window = window_init(app)?;
     let window_label = main_window.label().to_string();
     let handle_clone = app.handle().clone();
@@ -79,26 +77,29 @@ fn window_init(app: &App) -> tauri::Result<WebviewWindow> {
         .effects(effects)
         .build()?;
 
-    let tab_id = create_tab(&app.handle(), "main", "https://v2.tauri.app", "Tauri").unwrap();
+    let links = [
+        ("https://github.com/calebax/Rin", "Rin Browser"),
+        ("https://tauri.app/", "Tauri Docs"),
+        ("http://duckduckgo.com?q=Hello", "DuckDuckGo"),
+        ("https://www.bing.com", "Bing"),
+        ("https://www.google.com", "Google"),
+    ];
 
     let tab_manager = app.state::<Arc<Mutex<TabManager>>>();
-    {
-        let mut tm = tab_manager.lock().unwrap();
-        tm.switch_tab(&app.handle(), "main", tab_id).unwrap();
+    let mut tm = tab_manager.lock().unwrap();
+    let mut first_tab_id = None;
+
+    for (i, (url, name)) in links.iter().enumerate() {
+        let tab_id = tm.create_tab(&app.handle(), "main", url, name).unwrap();
+
+        if i == 0 {
+            first_tab_id = Some(tab_id.clone());
+        }
     }
 
-    let _ = create_tab(
-        app.handle(),
-        "main",
-        "http://duckduckgo.com?q=Hello",
-        "DuckDuckGo",
-    );
-
-    // window.add_child(
-    //     WebviewBuilder::new("main-app", WebviewUrl::App(Default::default())).auto_resize(),
-    //     tauri::LogicalPosition::new(0., 0.),
-    //     tauri::LogicalSize::new(800., 600.),
-    // )?;
+    if let Some(tab_id) = first_tab_id {
+        tm.switch_tab(&app.handle(), "main", tab_id).unwrap();
+    }
 
     Ok(window)
 }

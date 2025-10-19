@@ -3,8 +3,7 @@ import { useTabs } from "../hooks/useTabs";
 import { isValidURL, normalizeURL } from "../utils/url";
 
 export default function TabList() {
-  const windowLabel = "main";
-  const { tabs, activeId, addTab, removeTab, selectTab } = useTabs(windowLabel);
+  const { tabs, activeId, addTab, removeTab, selectTab } = useTabs();
 
   // 地址栏内容
   const [address, setAddress] = useState("");

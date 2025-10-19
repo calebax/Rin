@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
+import { window } from "@tauri-apps/api";
 import { CMD } from "../constants/cmd";
 
 export type TabItem = {
@@ -9,11 +10,18 @@ export type TabItem = {
   name: string;
   url: string;
   index: number;
+  is_active: boolean;
 };
 
-export function useTabs(windowLabel: string) {
+export function useTabs() {
+  const [windowLabel, setWindowLabel] = useState<string | null>(null);
   const [tabs, setTabs] = useState<TabItem[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const currentWindow = window.getCurrentWindow();
+    setWindowLabel(currentWindow.label);
+  }, []);
 
   /** 新增标签 */
   const addTab = async (
@@ -30,7 +38,8 @@ export function useTabs(windowLabel: string) {
 
     setTabs((prev) => [
       ...prev,
-      { id: tabId, name: name, url, index: prev.length },
+      // TODO is_active属性后期维护
+      { id: tabId, name: name, url, index: prev.length, is_active: true },
     ]);
 
     await invoke(CMD.TAB_SWITCH, { windowLabel, tabId });
@@ -104,7 +113,18 @@ export function useTabs(windowLabel: string) {
           windowLabel,
         });
         console.log("初始化 Tab 列表:", initialTabs);
-        setTabs(initialTabs);
+
+        if (initialTabs.length === 0) return;
+
+        // 1️⃣ 根据 index 从小到大排序
+        const sortedTabs = [...initialTabs].sort((a, b) => a.index - b.index);
+
+        // 2️⃣ 设置 activeId
+        const activeTab = sortedTabs.find((t) => (t as TabItem).is_active); // 后端字段 is_active
+        const activeIdValue = activeTab ? activeTab.id : sortedTabs[0].id;
+
+        setTabs(sortedTabs);
+        setActiveId(activeIdValue);
 
         // 监听 Tauri 标题变化事件
         const off = await listen<{ tabId: string; title: string }>(

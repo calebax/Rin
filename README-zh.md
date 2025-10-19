@@ -6,6 +6,11 @@
 
 # 🚀 Rin Browser: 简单而快速的检索增强生成浏览器
 
+<p align="center">
+<a href="README-zh.md">中文</a> |
+<a href="README.md">English</a>
+</p>
+
 </div>
 
 ---
@@ -13,11 +18,6 @@
 # Rin Browser（实验性）
 
 > 警告：这是一个实验性项目，主要用于学习与探索。当前版本不适合在生产环境使用，风险自负。
-
-<p>
-  <a href="README-zh.md">中文</a> |
-  <a href="README.md">English</a>
-</p>
 
 ---
 
