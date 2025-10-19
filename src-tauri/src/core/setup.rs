@@ -31,7 +31,7 @@ pub fn init(app: &mut App) -> std::result::Result<(), Box<dyn std::error::Error>
         }
     });
 
-    let le_menu = SubmenuBuilder::new(app, "le-browser")
+    let le_menu = SubmenuBuilder::new(app, "Rin")
         .text("open", "Open")
         .text("quit", "Quit")
         .build()?;

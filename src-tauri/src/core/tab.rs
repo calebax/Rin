@@ -3,12 +3,10 @@ use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
 use uuid::Uuid;
 
-use tauri::{
-    webview::WebviewBuilder, AppHandle, LogicalPosition, LogicalSize, Manager, State, WebviewUrl,
-    Window,
-};
+use tauri::{AppHandle, LogicalPosition, LogicalSize, Manager, State, Window};
 
 use crate::core::layout::{get_sidebar_width, get_window_scale_factor, set_webview_properties};
+use crate::core::webview::create_webview_builder;
 
 const TAB_MARGIN: f64 = 10.0;
 
@@ -146,15 +144,7 @@ pub fn create_tab(
     tm.tabs.insert(tab_id, new_tab);
     drop(tm); // 释放锁;
 
-    // 创建 WebView（先释放 tabs 锁，避免 E0502）
-    let webview_builder = WebviewBuilder::new(
-        &tab_id.to_string(),
-        WebviewUrl::External(
-            search_query
-                .parse::<url::Url>()
-                .map_err(|e| e.to_string())?,
-        ),
-    );
+    let webview_builder = create_webview_builder(&tab_id, search_query);
     let _ = window
         .add_child(webview_builder, position, size)
         .map_err(|e| e.to_string())
