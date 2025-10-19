@@ -4,7 +4,7 @@
   <img src="./src-tauri/icons/icon.png" width="120" height="120" alt="Rin Logo" style="border-radius: 20px; box-shadow: 0 8px 32px rgba(0, 217, 255, 0.3);">
 </div>
 
-# 🚀 Rin Browser: A Simple and Fast Search-Enhanced Browser
+# 🚀 Rin Browser: An experimental lightweight browser built with Tauri.
 
 <p>
   <a href="README.md">English</a> |
@@ -16,8 +16,6 @@
 ---
 
 # Rin Browser (Experimental)
-
-> Warning: This is an experimental project intended for learning and exploration. The current version is not suitable for production use. Use at your own risk.
 
 ---
 
