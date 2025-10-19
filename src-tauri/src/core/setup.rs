@@ -59,8 +59,8 @@ pub fn init(app: &mut App) -> std::result::Result<(), Box<dyn std::error::Error>
 fn window_init(app: &App) -> tauri::Result<WebviewWindow> {
     // 构建窗口视觉特效
     let effects = EffectsBuilder::new()
-        .effects(vec![Effect::HudWindow, Effect::Acrylic, Effect::Mica])
-        .radius(12.)
+        .effects(vec![Effect::Mica, Effect::Acrylic, Effect::HudWindow])
+        .radius(12.0)
         .build();
 
     // 构建主窗口

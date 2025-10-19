@@ -7,8 +7,9 @@
 # 🚀 Rin Browser: 一个用 Tauri 构建的实验性轻量浏览器
 
 <p align="center">
-<a href="README-zh.md">中文</a> |
-<a href="README.md">English</a>
+<a href="README.md">English</a> |
+<a href="README-zh.md">中文</a>
+
 </p>
 
 </div>
