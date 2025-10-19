@@ -1,73 +1,118 @@
-# React + TypeScript + Vite
+<div align="center">
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+<div style="margin: 20px 0;">
+  <img src="./src-tauri/icons/icon.png" width="120" height="120" alt="Rin Logo" style="border-radius: 20px; box-shadow: 0 8px 32px rgba(0, 217, 255, 0.3);">
+</div>
 
-Currently, two official plugins are available:
+# 🚀 Rin Browser: A Simple and Fast Search-Enhanced Browser
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+</div>
 
-## React Compiler
+---
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+# Rin Browser (Experimental)
 
-## Expanding the ESLint configuration
+> Warning: This is an experimental project intended for learning and exploration. The current version is not suitable for production use. Use at your own risk.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+<p>
+  <a href="README-zh.md">中文</a> |
+  <a href="README.md">English</a>
+</p>
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+---
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## ⚠️ Warning
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+This is an experimental project for learning and exploration purposes only. The current version is not suitable for production use. Use at your own risk.
+
+---
+
+## Project Overview
+
+Rin Browser is a minimal desktop browser prototype built with **React, TypeScript, Vite, and Tauri 2**.
+It aims to provide a simple and fast browsing experience while integrating a multi-tab UI with native WebView via Tauri.
+
+- **Tech Stack:** `React`, `TypeScript`, `Vite`, `Tauri 2`
+
+**Main Goals:**
+
+- Fast web browsing
+- Multi-tab management
+- Experimental search-enhanced features
+
+---
+
+## 🚀 Features (Early Stage)
+
+- Multi-tab management
+- Address bar input and navigation
+
+> Features are still under rapid iteration; APIs and experience may change at any time.
+
+## 📁 Directory Structure
+
+- `src/` — Frontend React code
+- `src-tauri/` — Tauri 2 (Rust backend)
+
+## 🛠 Environment Requirements
+
+- Node.js `>= 18`
+- Package manager: `pnpm`
+- Rust toolchain (via `rustup`)
+- Tauri 2 dependencies: https://tauri.app/start/prerequisites
+
+## ⚡ Quick Start
+
+### Install Dependencies
+
+```bash
+pnpm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+> Make sure the Rust toolchain is installed and check with `rustc -V`
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### Run in Development Mode (Desktop App)
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+pnpm tauri dev
 ```
+
+### Build (Generate Installer)
+
+```bash
+pnpm tauri build
+```
+
+---
+
+## ❓ FAQ
+
+- **Environment Check**
+  - Node.js >= 18 (`node -v`)
+  - Rust toolchain (`rustc -V`)
+- **Dependency Errors**
+  - Ensure Tauri dependencies are correctly installed for your OS
+
+---
+
+## 🔒 Security & Stability
+
+- Full production-level security measures are not yet implemented
+- Features may be incomplete; experience may change
+- Not recommended for handling sensitive data or long-term browsing
+
+---
+
+## 🤝 Contributing & Contact
+
+- Feel free to fork or submit a PR
+- Report bugs or suggestions via [GitHub Issues](https://github.com/calebax/Rin/issues)
+- Note: This project is still experimental; stability is not guaranteed
+
+---
+
+## 📖 References
+
+- [Tauri Official Documentation](https://tauri.app/)
+- [React Official Documentation](https://reactjs.org/)
+- [TypeScript Official Documentation](https://www.typescriptlang.org/)
