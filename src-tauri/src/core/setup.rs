@@ -84,7 +84,8 @@ fn window_init(app: &App) -> tauri::Result<WebviewWindow> {
 
     let links = [
         ("https://github.com/calebax/Rin", "Rin Browser"),
-        ("https://tauri.app/", "Tauri Docs"),
+        ("https://see.ckangle.com", "Blog"),
+        ("https://tauri.app", "Tauri Docs"),
         ("http://duckduckgo.com?q=Hello", "DuckDuckGo"),
         ("https://www.bing.com", "Bing"),
         ("https://www.google.com", "Google"),
