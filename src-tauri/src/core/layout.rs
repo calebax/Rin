@@ -22,7 +22,7 @@ pub fn set_webview_properties(
 }
 
 pub fn get_sidebar_width(_window_label: &str) -> f64 {
-    200.0
+    205.0
 }
 
 #[cfg(target_os = "macos")]
