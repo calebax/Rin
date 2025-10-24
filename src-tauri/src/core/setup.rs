@@ -1,8 +1,8 @@
 use std::sync::{Arc, Mutex};
 use tauri::menu::{MenuBuilder, SubmenuBuilder};
 use tauri::{
-    window::Effect, window::EffectsBuilder, App, Manager, WebviewUrl, WebviewWindow,
-    WebviewWindowBuilder, WindowEvent,
+    window::Effect, window::EffectsBuilder, App, LogicalPosition, Manager, TitleBarStyle,
+    WebviewUrl, WebviewWindow, WebviewWindowBuilder, WindowEvent,
 };
 
 use crate::core::tab::TabManager;
@@ -65,14 +65,19 @@ fn window_init(app: &App) -> tauri::Result<WebviewWindow> {
 
     // 构建主窗口
     let window = WebviewWindowBuilder::new(app, "main", WebviewUrl::default())
-        .title("Le")
         .resizable(true)
         .min_inner_size(460., 400.)
         .inner_size(800., 600.)
         .center()
         .resizable(true)
         .fullscreen(false)
-        .decorations(false)
+        .decorations(true)
+        // title_bar_style 仅支持mac
+        .title_bar_style(TitleBarStyle::Overlay)
+        .hidden_title(true)
+        // TODO 不生效 https://github.com/tauri-apps/tauri/blob/08bda64c25008bd45c5b58d06ff14649081a2f5d/crates/tauri-runtime/src/lib.rs#L950
+        .traffic_light_position(LogicalPosition::new(15.0, 15.0))
+        // 透明模糊
         .transparent(true)
         .effects(effects)
         .build()?;
