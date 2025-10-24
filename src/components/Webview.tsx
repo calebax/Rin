@@ -11,7 +11,7 @@ export default function Webview({
 }) {
   return (
     <div
-      className="absolute  overflow-hidden w-full"
+      className="absolute  overflow-hidden w-full rounded-[14px]"
       style={{
         left: x,
         top: y,

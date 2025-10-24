@@ -5,7 +5,9 @@ use uuid::Uuid;
 
 use tauri::{AppHandle, LogicalPosition, LogicalSize, Manager, State, Window};
 
-use crate::core::layout::{get_sidebar_width, get_window_scale_factor, set_webview_properties};
+use crate::core::layout::{
+    get_sidebar_width, get_window_scale_factor, set_webview_corner_radius, set_webview_properties,
+};
 use crate::core::webview::create_webview_builder;
 
 const TAB_MARGIN: f64 = 10.0;
@@ -51,7 +53,6 @@ impl TabManager {
     ) -> Result<Uuid, String> {
         // 获取宿主 Window
         let window: Window = app.get_window(window_label).ok_or("Window not found")?;
-
         // 生成 TabId
         let tab_id = self.gen_id();
 
@@ -67,6 +68,13 @@ impl TabManager {
             .add_child(webview_builder, position, size)
             .map_err(|e| e.to_string())
             .inspect(|wv| {
+                let _ = wv.with_webview(|webview| {
+                    #[cfg(target_os = "macos")]
+                    unsafe {
+                        set_webview_corner_radius(webview.inner(), 12.0);
+                    }
+                });
+
                 let _ = wv.hide();
             });
         // 准备 Tab 数据

@@ -7,6 +7,9 @@ name = "Rin"
 version = "0.0.0"
 dependencies = [
  "log",
+ "objc2 0.6.3",
+ "objc2-app-kit",
+ "objc2-web-kit",
  "serde",
  "serde_json",
  "tauri",
