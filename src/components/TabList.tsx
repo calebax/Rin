@@ -94,15 +94,18 @@ export default function TabList() {
               className="w-5 h-5 rounded"
             />
             <span className="flex-1 text-sm truncate">{t.name}</span>
-            <button
-              className="opacity-0 group-hover:opacity-100 w-5 h-5 flex items-center justify-center rounded-full text-xs transition-opacity hover:bg-white/30"
-              onClick={(e) => {
-                e.stopPropagation();
-                handleRemoveTab(t.id);
-              }}
-            >
-              ×
-            </button>
+
+            <span className="hidden group-hover:inline-flex">
+              <button
+                className="w-5 h-5 flex items-center justify-center rounded-full text-xs transition hover:bg-white/30"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleRemoveTab(t.id);
+                }}
+              >
+                ×
+              </button>
+            </span>
           </div>
         ))}
       </div>

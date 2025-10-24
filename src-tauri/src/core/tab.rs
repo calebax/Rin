@@ -101,7 +101,24 @@ impl TabManager {
         window_label: &str,
         tab_id: Uuid,
     ) -> Result<Uuid, String> {
+        // 如果目标 tab 已经活跃，直接返回
+        if self.active_tab_ids.contains(&tab_id) {
+            return Ok(tab_id);
+        }
+
         let window = app.get_window(window_label).ok_or("Window not found")?;
+
+        // 更新目标 tab 状态
+        if let Some(tab) = self.tabs.get_mut(&tab_id) {
+            tab.is_active = true;
+
+            if let Some(webview) = window.get_webview(&tab_id.to_string()) {
+                let _ = webview.show();
+                let _ = webview.set_focus();
+            } else {
+                return Err("WebView not found".into());
+            }
+        }
         // 隐藏之前活跃的 tab
         for old_id in self.active_tab_ids.iter() {
             if let Some(tab) = self.tabs.get_mut(old_id) {
@@ -118,18 +135,6 @@ impl TabManager {
         self.active_tab_ids.push(tab_id);
 
         self.tab_resized(app, window_label);
-
-        // 更新目标 tab 状态
-        if let Some(tab) = self.tabs.get_mut(&tab_id) {
-            tab.is_active = true;
-
-            if let Some(webview) = window.get_webview(&tab_id.to_string()) {
-                let _ = webview.show();
-                let _ = webview.set_focus();
-            } else {
-                return Err("WebView not found".into());
-            }
-        }
 
         Ok(tab_id)
     }
