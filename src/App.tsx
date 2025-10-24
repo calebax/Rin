@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 import { invoke } from "@tauri-apps/api/core";
-import TitleBar from "./components/TitleBar";
-import TabList from "./components/TabList";
-import WebviewContainer from "./components/WebviewContainer";
+import TitleBar from "@/components/sidebar/TitleBar";
+import TabList from "@/components/sidebar/TabList";
+import WebviewContainer from "@/components/webview/WebviewContainer";
 
 export default function App() {
   useEffect(() => {

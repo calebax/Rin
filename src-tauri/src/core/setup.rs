@@ -67,7 +67,7 @@ fn window_init(app: &App) -> tauri::Result<WebviewWindow> {
     let window = WebviewWindowBuilder::new(app, "main", WebviewUrl::default())
         .resizable(true)
         .min_inner_size(460., 400.)
-        .inner_size(800., 600.)
+        .inner_size(1000., 600.)
         .center()
         .resizable(true)
         .fullscreen(false)

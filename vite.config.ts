@@ -1,7 +1,7 @@
 import { defineConfig } from "vite";
+import path from "node:path";
 import react from "@vitejs/plugin-react";
 
-// @ts-expect-error process is a nodejs global
 const host = process.env.TAURI_DEV_HOST;
 
 export default defineConfig({
@@ -36,5 +36,11 @@ export default defineConfig({
     minify: !process.env.TAURI_ENV_DEBUG ? "esbuild" : false,
     // 在 debug 构建中生成 sourcemap
     sourcemap: !!process.env.TAURI_ENV_DEBUG,
+  },
+  resolve: {
+    alias: {
+      "@": path.resolve("./src"),
+      "@root": path.resolve("."),
+    },
   },
 });

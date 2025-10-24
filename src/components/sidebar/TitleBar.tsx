@@ -1,26 +1,11 @@
-import React, { useEffect } from "react";
-import { getCurrentWindow } from "@tauri-apps/api/window";
-
-type WindowLike = {
-  minimize: () => Promise<void>;
-  toggleMaximize: () => Promise<void>;
-  close: () => Promise<void>;
-  startDragging: () => Promise<void>;
-};
+import { useTabs } from "@/hooks/useTabs";
+import { useWindowDragAndMaximize } from "@/hooks/layout";
 
 export default function TitleBar() {
-  const getAppWindowSafe = (): WindowLike => {
-    try {
-      return getCurrentWindow() as unknown as WindowLike;
-    } catch {
-      return {
-        minimize: async () => {},
-        toggleMaximize: async () => {},
-        close: async () => {},
-        startDragging: async () => {},
-      };
-    }
-  };
+  const { reloadTab } = useTabs();
+  useWindowDragAndMaximize("drag-title-bar");
+
+  const handleReloadTab = () => reloadTab("123");
 
   // 按钮可点击控制变量（后续可从外部或状态管理传入）
   const canGoBack = true;
@@ -35,30 +20,10 @@ export default function TitleBar() {
         : "opacity-40 cursor-default pointer-events-none"
     }`;
 
-  useEffect(() => {
-    const handleMouseDown = (e: MouseEvent) => {
-      if (e.button === 0) {
-        if (e.detail === 2) {
-          getAppWindowSafe().toggleMaximize();
-        } else {
-          getAppWindowSafe().startDragging();
-        }
-      }
-    };
-
-    const titlebar = document.getElementById("titlebar");
-    titlebar?.addEventListener("mousedown", handleMouseDown);
-
-    return () => {
-      titlebar?.removeEventListener("mousedown", handleMouseDown);
-    };
-  }, []);
-
   return (
     <div
       id="titlebar"
-      className="h-[var(--titlebar-height)] w-full flex-shrink-0 flex items-center select-none"
-      data-tauri-drag-region
+      className="drag-title-bar h-[var(--titlebar-height)] w-full flex-shrink-0 flex items-center select-none cursor-default"
     >
       <div
         id="titlebar-controls"
@@ -123,10 +88,7 @@ export default function TitleBar() {
             aria-label="Refresh"
             className={btnClass(canMore)}
             disabled={!canMore}
-            onClick={() => {
-              if (!canMore) return;
-              console.log("Refresh");
-            }}
+            onClick={() => handleReloadTab()}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -146,8 +108,7 @@ export default function TitleBar() {
         </div>
       </div>
 
-      {/* 其余区域作为拖拽区 */}
-      <div className="flex-1 h-full" data-tauri-drag-region />
+      <div className="flex-1 h-full select-none" />
     </div>
   );
 }

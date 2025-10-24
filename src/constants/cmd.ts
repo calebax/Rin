@@ -3,4 +3,5 @@ export const CMD = {
   TAB_ADD: "create_tab_cmd",
   TAB_CLOSE: "close_tab_cmd",
   TAB_SWITCH: "switch_tab_cmd",
+  TAB_RELOAD: "reload_tab_cmd",
 } as const;

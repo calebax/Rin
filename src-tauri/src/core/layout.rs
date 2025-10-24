@@ -39,9 +39,3 @@ pub unsafe fn set_webview_corner_radius(webview: *const std::ffi::c_void, radius
         let _: () = msg_send![&*layer, setMasksToBounds: true];
     }
 }
-
-// 新增：对外暴露获取侧栏宽度的 Tauri 命令
-#[tauri::command]
-pub async fn get_sidebar_width_cmd(_app: AppHandle, window_label: String) -> Result<f64, String> {
-    Ok(get_sidebar_width(&window_label))
-}

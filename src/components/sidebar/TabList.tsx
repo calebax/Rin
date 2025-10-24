@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { useTabs } from "../hooks/useTabs";
-import { isValidURL, normalizeURL } from "../utils/url";
+import { useRequest } from "ahooks";
+import { useTabs } from "@/hooks/useTabs";
+import { isValidURL, normalizeURL } from "@/utils/url";
 
 export default function TabList() {
-  const { tabs, activeId, addTab, removeTab, selectTab } = useTabs();
+  const { tabs, activeId, addTab, removeTab, selectTab, reloadTab } = useTabs();
 
   // 地址栏内容
   const [address, setAddress] = useState("");
@@ -12,29 +13,29 @@ export default function TabList() {
   const handleSelectTab = (tabId: string) => selectTab(tabId);
   const handleRemoveTab = (tabId: string) => removeTab(tabId);
   const handleAddTab = () => addTab("https://www.google.com.hk/", "New Tab");
+  const handleReloadTab = () => reloadTab("123");
 
   /** 回车打开地址 */
-  const openAddress = async () => {
-    const trimmed = address.trim();
-    if (!trimmed) return;
+  const { run: openAddress } = useRequest(
+    async () => {
+      const trimmed = address.trim();
+      if (!trimmed) return;
 
-    // 检查是否为有效 URL
-    let toURL: string | null = null;
-    if (isValidURL(trimmed)) {
-      console.log("isValidURL:", trimmed, isValidURL(trimmed));
-      const url = normalizeURL(trimmed);
-      if (url) {
-        toURL = url;
+      let toURL: string | null = null;
+      if (isValidURL(trimmed)) {
+        const url = normalizeURL(trimmed);
+        if (url) toURL = url;
       }
-    }
-    if (!toURL) {
-      // 不是有效 URL，作为搜索词处理
-      const query = encodeURIComponent(trimmed);
-      toURL = `https://www.phind.com/search?q=${query}`;
-    }
-    await addTab(toURL, toURL);
-    setAddress("");
-  };
+      if (!toURL) {
+        const query = encodeURIComponent(trimmed);
+        toURL = `https://www.phind.com/search?q=${query}`;
+      }
+
+      await addTab(toURL, toURL);
+      setAddress("");
+    },
+    { manual: true }
+  );
 
   /** 根据 URL 计算 favicon */
   const getFaviconUrl = (url: string) => {
@@ -115,7 +116,7 @@ export default function TabList() {
         {/* 刷新按钮 */}
         <button
           className="w-7 h-7 flex items-center justify-center rounded-full bg-gray-500 text-white hover:bg-gray-600 transition-colors"
-          onClick={() => console.log("Refresh")}
+          onClick={() => handleReloadTab()}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"

@@ -1,9 +1,8 @@
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
-use std::sync::{Arc, Mutex};
 use uuid::Uuid;
 
-use tauri::{AppHandle, LogicalPosition, LogicalSize, Manager, State, Window};
+use tauri::{AppHandle, LogicalPosition, LogicalSize, Manager, Window};
 
 use crate::core::layout::{
     get_sidebar_width, get_window_scale_factor, set_webview_corner_radius, set_webview_properties,
@@ -39,6 +38,7 @@ impl TabManager {
             active_tab_ids: Vec::new(),
         }
     }
+
     /// 根据window_label获取当前tab列表
     pub fn get_tab_info_list(&self, _window_label: String) -> Vec<Tab> {
         self.tabs.values().cloned().collect()
@@ -170,7 +170,8 @@ impl TabManager {
     pub fn tab_resized(&self, app: &AppHandle, window_label: &str) {
         let window = match app.get_window(window_label) {
             Some(w) => w,
-            None => return, // 没找到窗口，直接返回
+            // 没找到窗口，直接返回
+            None => return,
         };
 
         let window_size = window.inner_size().unwrap();
@@ -198,59 +199,4 @@ fn calc_webview_geometry(
         window_size.height as f64 / scale_factor - TAB_MARGIN * 2.0,
     );
     (position, size)
-}
-
-#[tauri::command]
-pub fn get_tab_info_list_cmd(
-    window_label: String,
-    tab_manager: State<'_, Arc<Mutex<TabManager>>>,
-) -> Vec<Tab> {
-    let tabs = (*tab_manager)
-        .lock()
-        .unwrap()
-        .get_tab_info_list(window_label);
-    tabs
-}
-
-#[tauri::command]
-pub async fn create_tab_cmd(
-    app: AppHandle,
-    window_label: String,
-    url: String,
-    name: String,
-    tm: State<'_, Arc<Mutex<TabManager>>>,
-) -> Result<String, String> {
-    let mut tm = tm.lock().unwrap();
-    let tab_id = tm.create_tab(&app, &window_label, &url, &name)?;
-    Ok(tab_id.to_string())
-}
-
-#[tauri::command]
-pub async fn switch_tab_cmd(
-    app: AppHandle,
-    window_label: String,
-    tab_id: String,
-    tm: State<'_, Arc<Mutex<TabManager>>>,
-) -> Result<(), String> {
-    let tab_uuid = Uuid::parse_str(&tab_id).map_err(|e| e.to_string())?;
-
-    let mut tm = tm.lock().unwrap();
-    tm.switch_tab(&app, &window_label, tab_uuid).unwrap();
-
-    Ok(())
-}
-
-#[tauri::command]
-pub async fn close_tab_cmd(
-    app: AppHandle,
-    window_label: String,
-    tab_id: String,
-    tm: State<'_, Arc<Mutex<TabManager>>>,
-) -> Result<(), String> {
-    let tab_uuid = Uuid::parse_str(&tab_id).map_err(|e| e.to_string())?;
-
-    let mut tm = tm.lock().unwrap();
-    tm.close_tab(&app, &window_label, tab_uuid).unwrap();
-
-    Ok(())
 }
