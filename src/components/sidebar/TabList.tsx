@@ -49,8 +49,7 @@ export default function TabList() {
 
   return (
     <aside
-      className="absolute left-0 bottom-0 flex flex-col flex-shrink-0"
-      style={{ top: "var(--titlebar-height)", width: "var(--sidebar-width)" }}
+      className="flex-1 flex flex-col w-full overflow-hidden"
     >
       {/* 固定地址栏 */}
       <div className="px-4 flex-shrink-0 ">

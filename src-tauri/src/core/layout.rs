@@ -28,8 +28,7 @@ pub fn get_sidebar_width(_window_label: &str) -> f64 {
 #[cfg(target_os = "macos")]
 pub unsafe fn set_webview_corner_radius(webview: *const std::ffi::c_void, radius: f64) {
     let view: &WKWebView = &*(webview as *const WKWebView);
-    // layer() 返回 Option,需要解包
-    // layer() 返回 Option<Retained<CALayer>>
+    // layer() 返回 Option<Retained<CALayer>> ,需要解包
     if let Some(layer) = view.layer() {
         // layer.setCornerRadius(8.0);
         // layer.setMasksToBounds(true);

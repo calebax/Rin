@@ -72,10 +72,6 @@ export function useTabs() {
     };
   }, [windowLabel]);
 
-  // useEffect(() => {
-  //   console.log("tabs updated:", tabs);
-  // }, [tabs]);
-
   const { run: addTab } = useRequest(
     async (url = "https://www.google.com.hk/", name = "New Tab") => {
       if (!windowLabel) return;
