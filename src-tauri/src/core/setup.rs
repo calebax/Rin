@@ -5,6 +5,8 @@ use tauri::{
     WebviewUrl, WebviewWindow, WebviewWindowBuilder, WindowEvent,
 };
 
+use crate::core::layout::sidebar_manager;
+use crate::core::layout::SidebarState;
 use crate::core::tab::TabManager;
 
 /// setup
@@ -57,6 +59,8 @@ pub fn init(app: &mut App) -> std::result::Result<(), Box<dyn std::error::Error>
 }
 
 fn window_init(app: &App) -> tauri::Result<WebviewWindow> {
+    const DEFAULT_WINDOW_LABEL: &str = "main";
+
     // 构建窗口视觉特效
     let effects = EffectsBuilder::new()
         .effects(vec![Effect::Mica, Effect::Acrylic, Effect::HudWindow])
@@ -64,7 +68,7 @@ fn window_init(app: &App) -> tauri::Result<WebviewWindow> {
         .build();
 
     // 构建主窗口
-    let window = WebviewWindowBuilder::new(app, "main", WebviewUrl::default())
+    let window = WebviewWindowBuilder::new(app, DEFAULT_WINDOW_LABEL, WebviewUrl::default())
         .resizable(true)
         .min_inner_size(460., 400.)
         .inner_size(1000., 600.)
@@ -82,6 +86,8 @@ fn window_init(app: &App) -> tauri::Result<WebviewWindow> {
         .effects(effects)
         .build()?;
 
+    sidebar_manager().set(DEFAULT_WINDOW_LABEL, SidebarState { width: 205.0 });
+
     let links = [
         ("https://github.com/calebax/Rin", "Rin Browser"),
         ("https://see.ckangle.com", "Blog"),
@@ -96,7 +102,9 @@ fn window_init(app: &App) -> tauri::Result<WebviewWindow> {
     let mut first_tab_id = None;
 
     for (i, (url, name)) in links.iter().enumerate() {
-        let tab_id = tm.create_tab(&app.handle(), "main", url, name).unwrap();
+        let tab_id = tm
+            .create_tab(&app.handle(), DEFAULT_WINDOW_LABEL, url, name)
+            .unwrap();
 
         if i == 0 {
             first_tab_id = Some(tab_id.clone());
@@ -104,7 +112,8 @@ fn window_init(app: &App) -> tauri::Result<WebviewWindow> {
     }
 
     if let Some(tab_id) = first_tab_id {
-        tm.switch_tab(&app.handle(), "main", tab_id).unwrap();
+        tm.switch_tab(&app.handle(), DEFAULT_WINDOW_LABEL, tab_id)
+            .unwrap();
     }
 
     Ok(window)

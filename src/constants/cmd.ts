@@ -6,4 +6,5 @@ export const CMD = {
   TAB_RELOAD: "reload_tab_cmd",
 
   WINDOW_GET_SIDEBAR_WIDTH: "get_sidebar_width_cmd",
+  WINDOW_SET_SIDEBAR_WIDTH: "set_sidebar_width_cmd",
 } as const;

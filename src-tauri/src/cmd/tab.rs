@@ -1,4 +1,4 @@
-use crate::cmd::CmdResult;
+use super::CmdResult;
 use std::sync::{Arc, Mutex};
 use tauri::{AppHandle, State};
 use uuid::Uuid;

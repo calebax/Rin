@@ -6,7 +6,7 @@ import { useSidebarWidth } from "@/hooks/useLayout";
 
 export default function Sidebar() {
   const ref = useRef<HTMLElement | null>(null);
-  useSidebarWidth();
+  const { setSidebarWidth } = useSidebarWidth();
 
   return (
     <aside
@@ -16,7 +16,7 @@ export default function Sidebar() {
     >
       <TitleBar />
       <TabList />
-      <SidebarResizeHandle containerRef={ref} />
+      <SidebarResizeHandle containerRef={ref} onWidthChange={setSidebarWidth} />
     </aside>
   );
 }

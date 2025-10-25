@@ -16,7 +16,8 @@ pub fn run() {
             cmd::switch_tab_cmd,
             cmd::close_tab_cmd,
             cmd::get_tab_info_list_cmd,
-            cmd::get_sidebar_width_cmd
+            cmd::get_sidebar_width_cmd,
+            cmd::set_sidebar_width_cmd,
         ])
         .setup(setup::init)
         .run(tauri::generate_context!())

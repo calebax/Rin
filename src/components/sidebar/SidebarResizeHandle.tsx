@@ -33,7 +33,6 @@ export default function SidebarResizeHandle({
     if (!sidebarEl) return;
     const rect = sidebarEl.getBoundingClientRect();
     const next = Math.min(max, Math.max(min, Math.round(clientX - rect.left)));
-    console.log("nextWidth", next);
     document.documentElement.style.setProperty("--sidebar-width", `${next}px`);
     onWidthChange?.(next);
   };

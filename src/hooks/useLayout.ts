@@ -43,7 +43,12 @@ export function useSidebarWidth(
     const rounded = applyWidth(w);
     if (rounded === width) return;
     setWidth(rounded);
-    console.log("设置侧栏宽度为:", rounded);
+    invoke(CMD.WINDOW_SET_SIDEBAR_WIDTH, {
+      windowLabel,
+      width: rounded,
+    }).catch((err) => {
+      console.error("设置侧栏宽度失败:", err);
+    });
   };
 
   return { width, setSidebarWidth };
