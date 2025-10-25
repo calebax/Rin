@@ -8,7 +8,8 @@ use uuid::Uuid;
 struct TabUpdate {
     tab_id: String,
     title: String,
-    loaded: bool,
+    url: Url,
+    event: String,
 }
 
 pub fn create_webview_builder<R: Runtime>(
@@ -27,24 +28,41 @@ pub fn create_webview_builder<R: Runtime>(
         }
     };
 
+    let parsed_url_clone = parsed_url.clone();
     let webview_builder =
-        WebviewBuilder::new(&tab_id.to_string(), WebviewUrl::External(parsed_url))
+        WebviewBuilder::new(&tab_id.to_string(), WebviewUrl::External(parsed_url_clone))
             .user_agent(get_desktop_user_agent().as_str())
             .on_document_title_changed({
                 let app = app.clone();
+                let parsed_url = parsed_url.clone();
                 move |webview, new_title| {
                     println!("新标题: {}", new_title);
+
                     let payload = TabUpdate {
                         tab_id: webview.label().to_string(),
                         title: new_title,
-                        loaded: false,
+                        url: parsed_url.clone(),
+                        event: "titleChanged".to_string(),
                     };
+
                     // TODO 临时实现，后续统一规划tab状态与浏览历史，tab推送事件也可采用window.emit
                     app.emit("tab_update", payload).unwrap();
                 }
             })
-            .on_page_load(|_webview, pagleload| {
-                println!("页面加载: {:?}", pagleload);
+            .on_page_load({
+                let app = app.clone();
+                move |webview, pagleload| {
+                    println!("页面加载: {:?}", pagleload);
+
+                    let payload = TabUpdate {
+                        tab_id: webview.label().to_string(),
+                        title: "".to_string(),
+                        url: pagleload.url().clone(),
+                        event: format!("{:?}", pagleload.event()),
+                    };
+
+                    app.emit("tab_update", payload).unwrap();
+                }
             })
             .on_new_window(|url: Url, features: NewWindowFeatures| {
                 println!("页面请求打开新窗口: {}", url);

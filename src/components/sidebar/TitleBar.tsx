@@ -2,12 +2,13 @@ import { useTabs } from "@/hooks/useTabs";
 import { useWindowDragAndMaximize } from "@/hooks/useWindow";
 
 export default function TitleBar() {
-  const { reloadTab } = useTabs();
   useWindowDragAndMaximize("drag-title-bar");
+  const { reloadTab, backTab, forwardTab } = useTabs();
+  const handleReloadTab = () => reloadTab();
+  const handleBackTab = () => backTab();
+  const handleForwardTab = () => forwardTab();
 
-  const handleReloadTab = () => reloadTab("123");
-
-  // 按钮可点击控制变量（后续可从外部或状态管理传入）
+  // TODO 按钮可点击控制变量（后续可从外部或状态管理传入）
   const canGoBack = true;
   const canGoForward = true;
   const canMore = true;
@@ -33,7 +34,7 @@ export default function TitleBar() {
           disabled={!canGoBack}
           onClick={() => {
             if (!canGoBack) return;
-            console.log("Back");
+            handleBackTab();
           }}
         >
           <svg
@@ -59,7 +60,7 @@ export default function TitleBar() {
           disabled={!canGoForward}
           onClick={() => {
             if (!canGoForward) return;
-            console.log("Forward");
+            handleForwardTab();
           }}
         >
           <svg
@@ -91,13 +92,12 @@ export default function TitleBar() {
             fill="none"
             stroke="currentColor"
             strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
             className="w-3.5 h-3.5"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-            />
+            <path d="M21 12a9 9 0 1 1-3.5-7" />
+            <polyline points="21 3 21 9 15 9" />
           </svg>
         </button>
       </div>

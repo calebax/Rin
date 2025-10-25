@@ -18,6 +18,8 @@ pub fn run() {
             cmd::get_tab_info_list_cmd,
             cmd::get_sidebar_width_cmd,
             cmd::set_sidebar_width_cmd,
+            cmd::navigate_tab_cmd,
+            cmd::tab_history_cmd,
         ])
         .setup(setup::init)
         .run(tauri::generate_context!())

@@ -4,7 +4,8 @@ import { useTabs } from "@/hooks/useTabs";
 import { isValidURL, normalizeURL } from "@/utils/url";
 
 export default function TabList() {
-  const { tabs, activeId, addTab, removeTab, selectTab, reloadTab } = useTabs();
+  const { tabs, activeId, addTab, removeTab, selectTab, navigateTab } =
+    useTabs();
 
   // 地址栏内容
   const [address, setAddress] = useState("");
@@ -13,7 +14,7 @@ export default function TabList() {
   const handleSelectTab = (tabId: string) => selectTab(tabId);
   const handleRemoveTab = (tabId: string) => removeTab(tabId);
   const handleAddTab = () => addTab("https://www.google.com.hk/", "New Tab");
-  const handleReloadTab = () => reloadTab("123");
+  const handleReloadTab = () => console.log("123");
 
   /** 回车打开地址 */
   const { run: openAddress } = useRequest(
@@ -31,7 +32,7 @@ export default function TabList() {
         toURL = `https://www.phind.com/search?q=${query}`;
       }
 
-      await addTab(toURL, toURL);
+      await navigateTab(toURL);
       setAddress("");
     },
     { manual: true }
@@ -48,11 +49,9 @@ export default function TabList() {
   };
 
   return (
-    <aside
-      className="flex-1 flex flex-col w-full overflow-hidden"
-    >
+    <aside className="flex-1 flex flex-col w-full overflow-hidden">
       {/* 固定地址栏 */}
-      <div className="px-4 flex-shrink-0 ">
+      <div className="px-3 py-0.5 flex-shrink-0 ">
         <input
           value={address}
           onChange={(e) => setAddress(e.target.value)}
@@ -60,7 +59,7 @@ export default function TabList() {
             if (e.key === "Enter") openAddress();
           }}
           placeholder="Search or enter URL"
-          className="w-full h-9 rounded-xl px-3 bg-white/70 text-black text-xs placeholder:text-gray-400 placeholder:text-xs shadow-sm outline-none focus:ring-2 ring-blue-400"
+          className="w-full h-8 rounded-xl px-3 bg-white/70 text-black text-xs placeholder:text-gray-400 placeholder:text-xs shadow-sm outline-none focus:ring-2 ring-blue-400"
         />
       </div>
 

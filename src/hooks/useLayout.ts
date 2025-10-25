@@ -47,7 +47,7 @@ export function useSidebarWidth(
       windowLabel,
       width: rounded,
     }).catch((err) => {
-      console.error("设置侧栏宽度失败:", err);
+      console.error("sidebar width error:", err);
     });
   };
 

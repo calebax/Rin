@@ -1,8 +1,8 @@
+use anyhow::Context;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
+use tauri::{AppHandle, LogicalPosition, LogicalSize, Manager, Webview, Window};
 use uuid::Uuid;
-
-use tauri::{AppHandle, LogicalPosition, LogicalSize, Manager, Window};
 
 use crate::core::layout::{
     get_sidebar_width, get_window_scale_factor, set_webview_corner_radius, set_webview_properties,
@@ -11,6 +11,15 @@ use crate::core::webview::create_webview_builder;
 
 const TAB_MARGIN: f64 = 10.0;
 
+#[derive(Debug, Clone)]
+pub enum TabNavigation {
+    Back,
+    Reload,
+    Forward,
+    NavigateTo(String), // 可选，用于跳转到指定 URL
+}
+
+#[serde(rename_all = "camelCase")]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Tab {
     pub id: Uuid,
@@ -163,6 +172,28 @@ impl TabManager {
         Ok(())
     }
 
+    pub fn navigate(
+        &mut self,
+        app: &AppHandle,
+        window_label: &str,
+        tab_id: Uuid,
+        action: TabNavigation,
+    ) -> anyhow::Result<()> {
+        let window: Window = app.get_window(window_label).context("Window not found")?;
+        let webview: Webview = window
+            .get_webview(&tab_id.to_string())
+            .context("Webview not found")?;
+
+        match action {
+            TabNavigation::Back => webview_go_back(&webview)?,
+            TabNavigation::Reload => webview_reload(&webview)?,
+            TabNavigation::Forward => webview_go_forward(&webview)?,
+            TabNavigation::NavigateTo(url) => webview_navigate_to(&webview, &url)?,
+        }
+
+        Ok(())
+    }
+
     fn gen_id(&self) -> Uuid {
         Uuid::new_v4()
     }
@@ -199,4 +230,37 @@ fn calc_webview_geometry(
         window_size.height as f64 / scale_factor - TAB_MARGIN * 2.0,
     );
     (position, size)
+}
+
+fn webview_reload(webview: &Webview) -> anyhow::Result<()> {
+    webview.reload().context("Failed to reload webview")?;
+    Ok(())
+}
+
+fn webview_go_back(webview: &Webview) -> anyhow::Result<()> {
+    webview
+        .eval("window.history.back()")
+        .context("Failed to go back in webview history")?;
+    Ok(())
+}
+
+fn webview_go_forward(webview: &Webview) -> anyhow::Result<()> {
+    webview
+        .eval("window.history.forward()")
+        .context("Failed to go forward in webview history")?;
+    Ok(())
+}
+
+fn webview_navigate_to(webview: &Webview, url: &str) -> anyhow::Result<()> {
+    let parsed = tauri::Url::parse(url).context("Failed to parse URL")?;
+    let current_url = webview.url().unwrap();
+    if current_url.to_string() == parsed.to_string() {
+        webview_reload(webview)?;
+        return Ok(());
+    }
+
+    webview
+        .navigate(parsed)
+        .context(format!("Failed to navigate to {}", url))?;
+    Ok(())
 }

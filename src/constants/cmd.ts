@@ -4,6 +4,8 @@ export const CMD = {
   TAB_CLOSE: "close_tab_cmd",
   TAB_SWITCH: "switch_tab_cmd",
   TAB_RELOAD: "reload_tab_cmd",
+  TAB_NAVIGATE: "navigate_tab_cmd",
+  TAB_SWITCH_HISTORY_PAGE: "tab_history_cmd",
 
   WINDOW_GET_SIDEBAR_WIDTH: "get_sidebar_width_cmd",
   WINDOW_SET_SIDEBAR_WIDTH: "set_sidebar_width_cmd",

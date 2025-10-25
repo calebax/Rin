@@ -32,7 +32,6 @@ export const normalizeURL = (raw: string): string | null => {
   if (!trimmed) return null;
 
   try {
-    console.log("normalize:", trimmed, normalize(trimmed));
     return normalize(trimmed);
   } catch (e) {
     console.warn("Invalid URL:", trimmed, e);
