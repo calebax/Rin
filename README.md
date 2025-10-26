@@ -17,6 +17,8 @@
 
 # Rin Browser (Experimental)
 
+![image](./.github/assets/rin-browser.webp)
+
 ---
 
 ## ⚠️ Warning
@@ -42,8 +44,19 @@ It aims to provide a simple and fast browsing experience while integrating a mul
 
 ## 🚀 Features (Early Stage)
 
-- Multi-tab management
-- Address bar input and navigation
+- [x] Multi-tab management
+- [x] Address bar input & navigation
+- [x] Back / Forward / Reload
+- [ ] Multi-window support
+- [ ] Keyboard shortcuts
+- [ ] Page content summarization
+- [ ] Cookie / Session management
+- [ ] Information integration & analysis
+- [ ] Bookmarks & history
+- [ ] File downloads
+- [ ] AI-powered tag management
+- [ ] Performance optimization (WebView related)
+- [ ] Ad & tracker blocking
 
 > Features are still under rapid iteration; APIs and experience may change at any time.
 
