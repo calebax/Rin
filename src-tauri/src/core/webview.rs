@@ -36,7 +36,7 @@ pub fn create_webview_builder<R: Runtime>(
                 let app = app.clone();
                 let parsed_url = parsed_url.clone();
                 move |webview, new_title| {
-                    println!("新标题: {}", new_title);
+                    // println!("新标题: {}", new_title);
 
                     let payload = TabUpdate {
                         tab_id: webview.label().to_string(),
@@ -52,7 +52,7 @@ pub fn create_webview_builder<R: Runtime>(
             .on_page_load({
                 let app = app.clone();
                 move |webview, pagleload| {
-                    println!("页面加载: {:?}", pagleload);
+                    // println!("页面加载: {:?}", pagleload);
 
                     let payload = TabUpdate {
                         tab_id: webview.label().to_string(),

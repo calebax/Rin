@@ -4,6 +4,7 @@ use std::collections::HashMap;
 use tauri::{AppHandle, LogicalPosition, LogicalSize, Manager, Webview, Window};
 use uuid::Uuid;
 
+use crate::core::ai_overlay::overlay_resized;
 use crate::core::layout::{
     get_sidebar_width, get_window_scale_factor, set_webview_corner_radius, set_webview_properties,
 };
@@ -19,8 +20,8 @@ pub enum TabNavigation {
     NavigateTo(String), // 可选，用于跳转到指定 URL
 }
 
-#[serde(rename_all = "camelCase")]
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct Tab {
     pub id: Uuid,
     pub space_id: Uuid,
@@ -64,13 +65,9 @@ impl TabManager {
         let window: Window = app.get_window(window_label).ok_or("Window not found")?;
         // 生成 TabId
         let tab_id = self.gen_id();
-
-        // 获取窗口尺寸
-        let window_size = window.inner_size().map_err(|e| e.to_string())?;
-        let scale_factor = get_window_scale_factor(app, window_label).unwrap();
-        let sidebar_width = get_sidebar_width(window_label);
-        let (position, size) =
-            calc_webview_geometry(&tab_id, window_size, scale_factor, sidebar_width);
+        // 窗口尺寸
+        let position = LogicalPosition::new(get_sidebar_width(window_label), 50.);
+        let size = LogicalSize::new(0., 0.);
 
         let webview_builder = create_webview_builder(app, &tab_id, search_query);
         let _ = window
@@ -215,6 +212,7 @@ impl TabManager {
                 calc_webview_geometry(&active_tab_id, window_size, scale_factor, sidebar_width);
             set_webview_properties(&webview, position, size);
         }
+        overlay_resized(app, window_label);
     }
 }
 

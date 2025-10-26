@@ -3,8 +3,8 @@
 :root {
   /* --bg-start: rgba(193, 122, 92, 0.5);
   --bg-end: rgba(215, 232, 253, 0.5); */
-  --bg-start: rgba(255, 223, 220, 0.6); /* 浅珊瑚 */
-  --bg-end: rgba(255, 241, 239, 0.6); /* 雾粉渐变 */
+  --bg-start: rgba(243, 230, 229, 0.55); /* 浅暖粉/珊瑚感 */
+  --bg-end: rgba(255, 241, 239, 0.55); /* 更浅柔和色，渐变终点 */
   --bg-angle: 135deg;
   --sidebar-width: 220px;
   --titlebar-height: 38px;
@@ -20,9 +20,4 @@ body,
   border-radius: 12px;
   overflow: hidden;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-}
-
-/* 应用容器的渐变背景，仅全局保留 */
-body {
-  background: linear-gradient(var(--bg-angle), var(--bg-start), var(--bg-end));
 }

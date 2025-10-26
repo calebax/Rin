@@ -17,15 +17,15 @@ export function useTabs() {
     pushHistory,
   } = useWindowTabsStore.getState();
 
+  const activeId = useWindowTabsStore((s) =>
+    windowLabel ? s.getFocusTab(windowLabel) : null
+  );
+
   // 初始化 windowLabel
   useAsyncEffect(async () => {
     const currentWindow = window.getCurrentWindow();
     setWindowLabel(currentWindow.label);
   }, []);
-
-  const activeId = useWindowTabsStore((s) =>
-    windowLabel ? s.getFocusTab(windowLabel) : null
-  );
 
   const tabs = useWindowTabsStore(
     useShallow((s) => {

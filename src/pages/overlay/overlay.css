@@ -1,0 +1,9 @@
+html,
+body,
+#root {
+  border-radius: 16px;
+}
+
+body {
+  background-color: rgba(239, 232, 231, 0.53);
+}

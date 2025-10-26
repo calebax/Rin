@@ -1,3 +1,5 @@
+use crate::core::layout::sidebar_manager;
+use anyhow::{Context, Result};
 use std::sync::{Arc, Mutex};
 use tauri::menu::{MenuBuilder, SubmenuBuilder};
 use tauri::{
@@ -5,7 +7,6 @@ use tauri::{
     WebviewUrl, WebviewWindow, WebviewWindowBuilder, WindowEvent,
 };
 
-use crate::core::layout::sidebar_manager;
 use crate::core::layout::SidebarState;
 use crate::core::tab::TabManager;
 
@@ -111,10 +112,37 @@ fn window_init(app: &App) -> tauri::Result<WebviewWindow> {
         }
     }
 
+    // 创建全局右下角浮层窗口
+    let _ = create_overlay_window(app, &window)?;
+
     if let Some(tab_id) = first_tab_id {
         tm.switch_tab(&app.handle(), DEFAULT_WINDOW_LABEL, tab_id)
             .unwrap();
     }
 
     Ok(window)
+}
+
+// 创建一个全局独立 WebView 浮层窗口（透明高斯模糊，右下角）
+fn create_overlay_window(app: &App, parent_window: &WebviewWindow) -> Result<()> {
+    let overlay_label = format!("{}-ai-overlay", parent_window.label());
+    let effects = EffectsBuilder::new()
+        // .effects(vec![Effect::Mica, Effect::Acrylic, Effect::HudWindow])
+        .radius(18.0)
+        .build();
+    let _overlay_window = tauri::WebviewWindowBuilder::new(
+        app.handle(),
+        overlay_label,
+        WebviewUrl::App("overlay".into()),
+    )
+    .parent(parent_window)?
+    .decorations(false)
+    .transparent(true)
+    .effects(effects)
+    .position(10., 10.)
+    .inner_size(10., 10.)
+    .accept_first_mouse(true)
+    .build()?;
+
+    Ok(())
 }
